@@ -338,7 +338,8 @@
 
       .outline-button,
       .secondary-button,
-      .primary-button {
+      .primary-button,
+      .station-button {
         width: 100%;
         min-height: 40px;
         border-radius: 10px;
@@ -450,6 +451,168 @@
         color: #fff;
         font-size: 13px;
         cursor: pointer;
+      }
+
+      .schedule-panel {
+        display: grid;
+        gap: 10px;
+      }
+
+      .schedule-hero {
+        padding: 13px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--copec-blue), #0071ce);
+        color: #fff;
+      }
+
+      .schedule-hero h2 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.2;
+      }
+
+      .schedule-hero p {
+        margin: 6px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .schedule-summary {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .schedule-summary div {
+        padding: 8px 6px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.16);
+        text-align: center;
+      }
+
+      .schedule-summary strong,
+      .schedule-summary span {
+        display: block;
+      }
+
+      .schedule-summary strong {
+        font-size: 13px;
+      }
+
+      .schedule-summary span {
+        margin-top: 2px;
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 9px;
+      }
+
+      .station-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .station-card {
+        padding: 11px;
+        border: 1px solid #e3e8ef;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 1px 8px rgba(15, 23, 42, 0.04);
+      }
+
+      .station-card.selected {
+        border-color: var(--copec-blue);
+        background: #f7fbff;
+        box-shadow: 0 4px 14px rgba(0, 85, 165, 0.12);
+      }
+
+      .station-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+      }
+
+      .station-pin {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--copec-blue-light);
+        color: var(--copec-blue);
+        font-size: 17px;
+      }
+
+      .station-card h3 {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+
+      .station-card address {
+        margin-top: 3px;
+        color: var(--text-muted);
+        font-size: 11px;
+        font-style: normal;
+        line-height: 1.25;
+      }
+
+      .station-meta {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .station-meta span {
+        padding: 4px 7px;
+        border-radius: 20px;
+        background: var(--copec-gray);
+        color: #4b5563;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .station-meta .available {
+        background: #e1f5ee;
+        color: #23653f;
+      }
+
+      .station-button {
+        min-height: 34px;
+        margin-top: 10px;
+        border: 1px solid var(--copec-blue);
+        background: #fff;
+        color: var(--copec-blue);
+      }
+
+      .station-card.selected .station-button {
+        background: var(--copec-blue);
+        color: #fff;
+      }
+
+      .selected-station {
+        padding: 11px;
+        border-left: 3px solid var(--copec-blue);
+        border-radius: 10px;
+        background: var(--copec-gray);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .selected-station strong,
+      .selected-station span {
+        display: block;
+      }
+
+      .selected-station strong {
+        color: #27364a;
+      }
+
+      .selected-station span {
+        margin-top: 3px;
+        color: var(--text-muted);
       }
 
       .automotora-card {
@@ -611,6 +774,7 @@
               <button class="active" type="button" data-tab="fotos">Fotos</button>
               <button type="button" data-tab="informe">Informe</button>
               <button type="button" data-tab="videos">Videos</button>
+              <button type="button" data-tab="agenda">Agenda</button>
               <button type="button" data-tab="automotora">Automotora</button>
             </nav>
 
@@ -683,6 +847,45 @@
         { titulo: "Prueba de frenos", duracion: "0:52", descripcion: "Frenada de emergencia" },
         { titulo: "Revisión chasis inferior", duracion: "2:10", descripcion: "Con cámara endoscópica" },
         { titulo: "Test en ruta", duracion: "3:45", descripcion: "Manejo y respuesta" },
+      ];
+
+      const estacionesCopec = [
+        {
+          nombre: "Copec Los Dominicos",
+          comuna: "Las Condes",
+          direccion: "Av. Padre Hurtado Sur 875",
+          distancia: "2,4 km",
+          horario: "Lun a sáb · 09:00 a 18:30",
+          cupos: "3 cupos hoy",
+          disponibilidad: "Disponible",
+        },
+        {
+          nombre: "Copec Vitacura Kennedy",
+          comuna: "Vitacura",
+          direccion: "Av. Kennedy 5601",
+          distancia: "4,1 km",
+          horario: "Lun a vie · 08:30 a 18:00",
+          cupos: "Próximo cupo 10:30",
+          disponibilidad: "Disponible",
+        },
+        {
+          nombre: "Copec Príncipe de Gales",
+          comuna: "La Reina",
+          direccion: "Av. Príncipe de Gales 6850",
+          distancia: "5,7 km",
+          horario: "Lun a sáb · 09:30 a 17:30",
+          cupos: "2 cupos mañana",
+          disponibilidad: "Disponible",
+        },
+        {
+          nombre: "Copec Manquehue Sur",
+          comuna: "Las Condes",
+          direccion: "Manquehue Sur 1230",
+          distancia: "3,8 km",
+          horario: "Lun a vie · 09:00 a 19:00",
+          cupos: "Agenda semanal",
+          disponibilidad: "Alta demanda",
+        },
       ];
 
       const estados = {
@@ -774,6 +977,57 @@
           .join("");
       }
 
+      function renderAgenda(estacionSeleccionada = 0) {
+        const seleccion = estacionesCopec[estacionSeleccionada];
+
+        tabContent.className = "tab-panel schedule-panel";
+        tabContent.innerHTML = `
+          <section class="schedule-hero">
+            <h2>Agenda tu inspección precompra</h2>
+            <p>Elige una estación Copec habilitada para revisar el vehículo antes de comprarlo.</p>
+            <div class="schedule-summary">
+              <div><strong>${estacionesCopec.length}</strong><span>Copec habilitadas</span></div>
+              <div><strong>90 min</strong><span>Duración aprox.</span></div>
+              <div><strong>QR</strong><span>Check-in rápido</span></div>
+            </div>
+          </section>
+          <div class="selected-station" id="selected-station">
+            <strong>Seleccionada: ${seleccion.nombre}</strong>
+            <span>${seleccion.comuna} · ${seleccion.cupos} · ${seleccion.horario}</span>
+          </div>
+          <div class="station-list">
+            ${estacionesCopec
+              .map(
+                (estacion, index) => `
+                  <article class="station-card ${index === estacionSeleccionada ? "selected" : ""}">
+                    <div class="station-top">
+                      <div class="station-pin" aria-hidden="true">⌖</div>
+                      <div>
+                        <h3>${estacion.nombre}</h3>
+                        <address>${estacion.direccion}, ${estacion.comuna}</address>
+                      </div>
+                    </div>
+                    <div class="station-meta">
+                      <span class="available">${estacion.disponibilidad}</span>
+                      <span>${estacion.distancia}</span>
+                      <span>${estacion.cupos}</span>
+                    </div>
+                    <button class="station-button" type="button" data-station="${index}">
+                      ${index === estacionSeleccionada ? "Copec seleccionada" : "Agendar aquí"}
+                    </button>
+                  </article>
+                `,
+              )
+              .join("")}
+          </div>
+          <button class="primary-button" type="button">Continuar con esta Copec</button>
+        `;
+
+        tabContent.querySelectorAll("[data-station]").forEach((button) => {
+          button.addEventListener("click", () => renderAgenda(Number(button.dataset.station)));
+        });
+      }
+
       function renderAutomotora() {
         tabContent.className = "tab-panel automotora-card";
         tabContent.innerHTML = `
@@ -790,23 +1044,32 @@
             <div class="stat"><span>Inspeccionados</span><strong>127</strong></div>
           </div>
           <button class="primary-button" type="button">Contactar automotora</button>
-          <button class="secondary-button" type="button">Agendar visita</button>
+          <button class="secondary-button" type="button" data-tab-link="agenda">Agendar inspección</button>
         `;
+
+        tabContent.querySelector("[data-tab-link='agenda']").addEventListener("click", () => activateTab("agenda"));
       }
 
       const renderers = {
         fotos: renderFotos,
         informe: renderInforme,
         videos: renderVideos,
+        agenda: renderAgenda,
         automotora: renderAutomotora,
       };
 
-      tabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+      function activateTab(tabName) {
+        const button = document.querySelector(`[data-tab="${tabName}"]`);
+
+        if (button) {
           tabButtons.forEach((item) => item.classList.remove("active"));
           button.classList.add("active");
-          renderers[button.dataset.tab]();
-        });
+          renderers[tabName]();
+        }
+      }
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => activateTab(button.dataset.tab));
       });
 
       renderFotos();
