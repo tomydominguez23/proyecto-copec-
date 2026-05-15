@@ -4,9 +4,812 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Informe Copec Precompra</title>
+    <style>
+      :root {
+        --copec-blue: #0055a5;
+        --copec-blue-dark: #003b73;
+        --copec-blue-light: #e6eff9;
+        --copec-gray: #f4f6f9;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --line: #e5e7eb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(0, 85, 165, 0.18), transparent 32rem),
+          linear-gradient(135deg, #f8fafc 0%, #e5edf7 100%);
+        color: var(--text-main);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .page-shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px 12px;
+      }
+
+      .mobile-frame {
+        width: 340px;
+        min-height: 680px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 2.5px solid #d1d5db;
+        border-radius: 36px;
+        background: #f4f6f9;
+        box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
+      }
+
+      .notch-bar {
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--copec-blue);
+      }
+
+      .notch-bar div {
+        width: 80px;
+        height: 14px;
+        border-radius: 0 0 10px 10px;
+        background: #1a1a2e;
+      }
+
+      .phone-content {
+        max-height: 660px;
+        overflow-y: auto;
+        background: #fff;
+      }
+
+      .header {
+        padding: 18px 18px 24px;
+        background: var(--copec-blue);
+        color: #fff;
+      }
+
+      .header-top,
+      .car-title-row,
+      .score-card,
+      .report-item {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .header-top {
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .logo {
+        font-size: 23px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        line-height: 1;
+      }
+
+      .subtitle {
+        margin-top: 6px;
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+      }
+
+      .qr-box {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+
+      .qr-box svg {
+        fill: currentColor;
+      }
+
+      .verified-badge {
+        width: fit-content;
+        margin-top: 16px;
+        padding: 7px 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .content-stack {
+        padding: 0 12px 18px;
+        background: #fff;
+      }
+
+      .car-card {
+        position: relative;
+        z-index: 1;
+        margin-top: -10px;
+        padding: 14px;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 2px 12px rgba(0, 85, 165, 0.1);
+      }
+
+      .car-title-row {
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .car-title-row h1 {
+        max-width: 190px;
+        margin: 0;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.25;
+      }
+
+      .car-title-row strong {
+        color: var(--copec-blue);
+        font-size: 16px;
+        white-space: nowrap;
+      }
+
+      .stats-grid {
+        margin-top: 13px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .stats-grid.two-cols {
+        grid-template-columns: repeat(2, 1fr);
+        margin: 14px 0;
+      }
+
+      .stat {
+        padding: 9px 6px;
+        border-radius: 8px;
+        background: var(--copec-gray);
+        text-align: center;
+      }
+
+      .stat span {
+        display: block;
+        color: var(--text-muted);
+        font-size: 9px;
+        line-height: 1.1;
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 5px;
+        color: #1f2937;
+        font-size: 12px;
+        line-height: 1.15;
+      }
+
+      .score-card {
+        margin-top: 12px;
+        padding: 12px 14px;
+        align-items: center;
+        gap: 10px;
+        border-radius: 12px;
+        background: var(--copec-blue-light);
+      }
+
+      .score-main {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        color: var(--copec-blue);
+      }
+
+      .score-main strong {
+        color: var(--copec-blue-dark);
+        font-size: 36px;
+        line-height: 0.95;
+      }
+
+      .score-main span {
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .score-card p {
+        margin: 5px 0 0;
+        color: #4b6e99;
+        font-size: 11px;
+      }
+
+      .score-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 7px;
+        text-align: right;
+      }
+
+      .approved {
+        padding: 6px 9px;
+        border-radius: 20px;
+        background: var(--copec-blue);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .score-side small {
+        color: #4b6e99;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .tab-nav {
+        margin: 15px -12px 0;
+        padding: 0 12px;
+        display: flex;
+        gap: 18px;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tab-nav button {
+        flex: 0 0 auto;
+        padding: 12px 0 10px;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        color: var(--text-muted);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .tab-nav button.active {
+        color: var(--copec-blue);
+        border-bottom-color: var(--copec-blue);
+      }
+
+      .tab-panel {
+        padding: 14px 0 4px;
+      }
+
+      .photos-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+
+      .photo-thumb {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+      }
+
+      .photo-thumb::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.18));
+      }
+
+      .photo-thumb svg {
+        width: 48px;
+        height: 48px;
+        z-index: 1;
+        color: rgba(255, 255, 255, 0.42);
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .photo-thumb span {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        padding: 6px 7px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .outline-button,
+      .secondary-button,
+      .primary-button {
+        width: 100%;
+        min-height: 40px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .outline-button {
+        margin-top: 12px;
+        border: 1px solid var(--copec-blue);
+        background: #fff;
+        color: var(--copec-blue);
+      }
+
+      .report-panel {
+        display: grid;
+        gap: 14px;
+      }
+
+      .report-section h2 {
+        margin: 0 0 7px;
+        color: var(--text-muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+      }
+
+      .report-items {
+        overflow: hidden;
+        border: 1px solid #edf0f3;
+        border-radius: 10px;
+      }
+
+      .report-item {
+        padding: 10px;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 0.5px solid var(--line);
+      }
+
+      .report-item:last-child {
+        border-bottom: 0;
+      }
+
+      .report-item strong,
+      .video-card strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .report-item span:not(.status-chip),
+      .video-card span {
+        display: block;
+        margin-top: 3px;
+        color: var(--text-muted);
+        font-size: 11px;
+        line-height: 1.25;
+      }
+
+      .status-chip {
+        flex: 0 0 auto;
+        padding: 5px 8px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .status-chip.ok {
+        background: #e1f5ee;
+        color: #3b6d11;
+      }
+
+      .status-chip.warn {
+        background: #faeeda;
+        color: #854f0b;
+      }
+
+      .status-chip.fail {
+        background: #fcebeb;
+        color: #a32d2d;
+      }
+
+      .video-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .video-card {
+        padding: 11px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 10px;
+        background: var(--copec-gray);
+      }
+
+      .play-button {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        display: grid;
+        place-items: center;
+        border: 0;
+        border-radius: 50%;
+        background: var(--copec-blue);
+        color: #fff;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .automotora-card {
+        padding: 13px;
+        border: 0.5px solid #d5dbe3;
+        border-radius: 12px;
+      }
+
+      .dealer-header {
+        display: flex;
+        gap: 10px;
+      }
+
+      .dealer-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: var(--copec-blue);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .dealer-header h2 {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.2;
+      }
+
+      .dealer-header p {
+        margin: 3px 0 5px;
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+
+      .dealer-badge {
+        color: #1f8a4c;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .primary-button {
+        border: 1px solid var(--copec-blue);
+        background: var(--copec-blue);
+        color: #fff;
+      }
+
+      .secondary-button {
+        margin-top: 8px;
+        border: 1px solid #cfd6df;
+        background: #fff;
+        color: #374151;
+      }
+
+      .copec-seal {
+        margin-top: 12px;
+        padding: 11px;
+        display: flex;
+        gap: 9px;
+        border-left: 3px solid var(--copec-blue);
+        border-radius: 10px;
+        background: var(--copec-gray);
+        color: var(--copec-blue);
+      }
+
+      .copec-seal svg {
+        flex: 0 0 auto;
+        margin-top: 1px;
+      }
+
+      .copec-seal p {
+        margin: 0;
+        color: #27364a;
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .copec-seal strong,
+      .copec-seal span {
+        display: block;
+      }
+
+      .copec-seal span {
+        margin-top: 2px;
+        color: #5d6b7d;
+      }
+
+      @media (max-width: 380px) {
+        .page-shell {
+          padding: 0;
+          background: #fff;
+        }
+
+        .mobile-frame {
+          width: 100%;
+          min-height: 100vh;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .phone-content {
+          max-height: calc(100vh - 28px);
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <main class="page-shell">
+      <section class="mobile-frame" aria-label="Maqueta móvil del informe Copec">
+        <div class="notch-bar" aria-hidden="true"><div></div></div>
+        <div class="phone-content">
+          <header class="header">
+            <div class="header-top">
+              <div>
+                <div class="logo">COPEC</div>
+                <div class="subtitle">INSPECCIÓN PRECOMPRA</div>
+              </div>
+              <div class="qr-box" aria-label="Código QR">
+                <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+                  <path d="M4 4h7v7H4V4Zm2 2v3h3V6H6Zm9-2h7v7h-7V4Zm2 2v3h3V6h-3ZM4 15h7v7H4v-7Zm2 2v3h3v-3H6Zm10-1h2v2h-2v-2Zm4-1h2v3h-2v-3Zm-6 5h4v2h-4v-2Zm6 0h2v2h-2v-2Zm-6-6h2v2h-2v-2Z" />
+                </svg>
+              </div>
+            </div>
+            <div class="verified-badge">
+              <span aria-hidden="true">✓</span>
+              <span>Verificado · 15 mayo 2026</span>
+            </div>
+          </header>
+
+          <div class="content-stack">
+            <section class="car-card">
+              <div class="car-title-row">
+                <h1>Mazda CX-5 2.0 Skyactiv 2021</h1>
+                <strong>$18.990.000</strong>
+              </div>
+              <div class="stats-grid">
+                <div class="stat"><span>Kilometraje</span><strong>42.800 km</strong></div>
+                <div class="stat"><span>Patente</span><strong>LP-KT-58</strong></div>
+                <div class="stat"><span>Dueños</span><strong>1 dueño</strong></div>
+              </div>
+            </section>
+
+            <section class="score-card">
+              <div>
+                <div class="score-main"><strong>87</strong><span>/100 puntos Copec</span></div>
+                <p>Evaluación general del vehículo</p>
+              </div>
+              <div class="score-side">
+                <span class="approved">✓ Aprobado Copec</span>
+                <small>98 ítems revisados</small>
+              </div>
+            </section>
+
+            <nav class="tab-nav" aria-label="Secciones del informe">
+              <button class="active" type="button" data-tab="fotos">Fotos</button>
+              <button type="button" data-tab="informe">Informe</button>
+              <button type="button" data-tab="videos">Videos</button>
+              <button type="button" data-tab="automotora">Automotora</button>
+            </nav>
+
+            <section id="tab-content" class="tab-panel" aria-live="polite"></section>
+
+            <aside class="copec-seal">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v5.6c0 4.3 2.9 8.2 7 9.4 4.1-1.2 7-5.1 7-9.4V6l-7-3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                <path d="m8.6 12.1 2.1 2.1 4.7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <p>
+                <strong>Informe Copec #CL-2026-0515-4821</strong>
+                <span>Inspeccionado por técnico certificado Copec. Válido por 90 días.</span>
+              </p>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const fotos = [
+        { label: "Frontal", color: "#0B5FAA", icono: "car-front" },
+        { label: "Interior", color: "#1F2937", icono: "seat" },
+        { label: "Motor", color: "#7A8799", icono: "engine" },
+        { label: "Neumáticos", color: "#2B3440", icono: "wheel" },
+        { label: "Chasis inferior", color: "#475569", icono: "chassis" },
+        { label: "Tablero", color: "#0F766E", icono: "dashboard" },
+      ];
+
+      const informe = [
+        {
+          categoria: "Motor y transmisión",
+          items: [
+            { nombre: "Arranque en frío", detalle: "Ralentí y vibraciones", estado: "ok" },
+            { nombre: "Fugas de aceite", detalle: "Motor y caja", estado: "ok" },
+            { nombre: "Caja automática", detalle: "Cambios y patinaje", estado: "ok" },
+            { nombre: "Scanner OBD", detalle: "Códigos activos", estado: "warn" },
+          ],
+        },
+        {
+          categoria: "Frenos y suspensión",
+          items: [
+            { nombre: "Discos delanteros", detalle: "Desgaste medido", estado: "ok" },
+            { nombre: "Pastillas traseras", detalle: "30% vida útil restante", estado: "warn" },
+            { nombre: "Amortiguadores", detalle: "4 unidades", estado: "ok" },
+            { nombre: "Dirección asistida", detalle: "Juego y fugas", estado: "ok" },
+          ],
+        },
+        {
+          categoria: "Carrocería",
+          items: [
+            { nombre: "Pintura exterior", detalle: "Scanner 3D completo", estado: "ok" },
+            { nombre: "Techo y puertas", detalle: "Sellos y alineación", estado: "ok" },
+            { nombre: "Airbag lateral izquierdo", detalle: "Sistema SRS", estado: "fail" },
+          ],
+        },
+        {
+          categoria: "Electricidad",
+          items: [
+            { nombre: "Batería", detalle: "Capacidad y carga", estado: "ok" },
+            { nombre: "Luces y faros", detalle: "Delanteros y traseros", estado: "ok" },
+            { nombre: "Climatizador", detalle: "Compresor y distribución", estado: "ok" },
+          ],
+        },
+      ];
+
+      const videos = [
+        { titulo: "Arranque en frío", duracion: "1:24", descripcion: "Motor al arrancar" },
+        { titulo: "Prueba de frenos", duracion: "0:52", descripcion: "Frenada de emergencia" },
+        { titulo: "Revisión chasis inferior", duracion: "2:10", descripcion: "Con cámara endoscópica" },
+        { titulo: "Test en ruta", duracion: "3:45", descripcion: "Manejo y respuesta" },
+      ];
+
+      const estados = {
+        ok: ["Óptimo", "Bueno", "Normal"],
+        warn: ["Atención"],
+        fail: ["Revisar"],
+      };
+
+      const photoIcons = {
+        "car-front": '<path d="M15 35 20 21h24l5 14v12h-7v-5H22v5h-7V35Z" /><path d="M21 35h8m14 0h-8M23 25h18" />',
+        seat: '<path d="M23 12h15c3 0 5 2 5 5v23H25l-5-16V15c0-2 1-3 3-3Z" /><path d="M23 41h23v8H18v-4c0-2 2-4 5-4Z" />',
+        engine: '<path d="M18 25h29v20H18V25Z" /><path d="M25 25v-6h14v6M14 31h4m29 3h5M27 45v5h10v-5" />',
+        wheel: '<circle cx="32" cy="32" r="20" /><circle cx="32" cy="32" r="8" /><path d="M32 12v12m0 16v12M12 32h12m16 0h12m-6-14-9 9m-10 10-9 9m28 0-9-9m-10-10-9-9" />',
+        chassis: '<path d="M12 38h40M18 29h28l6 9H12l6-9Z" /><path d="M22 22h20M24 45h16M18 38v9m28-9v9" />',
+        dashboard: '<path d="M14 38c2-12 9-20 18-20s16 8 18 20H14Z" /><path d="M32 31 43 24M24 39h16M21 32h5m12 0h5" />',
+      };
+
+      const tabContent = document.querySelector("#tab-content");
+      const tabButtons = document.querySelectorAll("[data-tab]");
+
+      function iconSvg(type) {
+        return `<svg viewBox="0 0 64 64" aria-hidden="true">${photoIcons[type]}</svg>`;
+      }
+
+      function renderFotos() {
+        tabContent.className = "tab-panel";
+        tabContent.innerHTML = `
+          <div class="photos-grid">
+            ${fotos
+              .map(
+                (foto) => `
+                  <article class="photo-thumb" style="background-color: ${foto.color}">
+                    ${iconSvg(foto.icono)}
+                    <span>${foto.label}</span>
+                  </article>
+                `,
+              )
+              .join("")}
+          </div>
+          <button class="outline-button" type="button">Ver las ${fotos.length} fotos</button>
+        `;
+      }
+
+      function renderInforme() {
+        let okIndex = 0;
+        tabContent.className = "tab-panel report-panel";
+        tabContent.innerHTML = informe
+          .map(
+            (grupo) => `
+              <div class="report-section">
+                <h2>${grupo.categoria}</h2>
+                <div class="report-items">
+                  ${grupo.items
+                    .map((item) => {
+                      const texto =
+                        item.estado === "ok" ? estados.ok[okIndex++ % estados.ok.length] : estados[item.estado][0];
+                      return `
+                        <article class="report-item">
+                          <div>
+                            <strong>${item.nombre}</strong>
+                            <span>${item.detalle}</span>
+                          </div>
+                          <span class="status-chip ${item.estado}">${texto}</span>
+                        </article>
+                      `;
+                    })
+                    .join("")}
+                </div>
+              </div>
+            `,
+          )
+          .join("");
+      }
+
+      function renderVideos() {
+        tabContent.className = "tab-panel video-list";
+        tabContent.innerHTML = videos
+          .map(
+            (video) => `
+              <article class="video-card">
+                <button class="play-button" type="button" aria-label="Reproducir ${video.titulo}">▶</button>
+                <div>
+                  <strong>${video.titulo}</strong>
+                  <span>${video.duracion} · ${video.descripcion}</span>
+                </div>
+              </article>
+            `,
+          )
+          .join("");
+      }
+
+      function renderAutomotora() {
+        tabContent.className = "tab-panel automotora-card";
+        tabContent.innerHTML = `
+          <div class="dealer-header">
+            <div class="dealer-icon">A</div>
+            <div>
+              <h2>AutoMotora Los Andes</h2>
+              <p>Las Condes, Santiago</p>
+              <span class="dealer-badge">● Verificado Copec</span>
+            </div>
+          </div>
+          <div class="stats-grid two-cols">
+            <div class="stat"><span>Rating Google</span><strong>4.8 ★</strong></div>
+            <div class="stat"><span>Inspeccionados</span><strong>127</strong></div>
+          </div>
+          <button class="primary-button" type="button">Contactar automotora</button>
+          <button class="secondary-button" type="button">Agendar visita</button>
+        `;
+      }
+
+      const renderers = {
+        fotos: renderFotos,
+        informe: renderInforme,
+        videos: renderVideos,
+        automotora: renderAutomotora,
+      };
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          tabButtons.forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          renderers[button.dataset.tab]();
+        });
+      });
+
+      renderFotos();
+    </script>
   </body>
 </html>
