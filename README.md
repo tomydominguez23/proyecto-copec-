@@ -48,3 +48,10 @@ ADMIN_EMAIL=tu-correo@dominio.cl ADMIN_PASSWORD=una-clave-segura npm start
 ```bash
 npm test
 ```
+
+## Supabase
+
+El SQL y la guía para vincular Supabase están en:
+
+- `supabase/schema.sql`
+- `docs/supabase.md`
