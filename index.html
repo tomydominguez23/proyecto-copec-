@@ -615,6 +615,172 @@
         color: var(--text-muted);
       }
 
+      .server-files,
+      .admin-panel {
+        display: grid;
+        gap: 10px;
+      }
+
+      .server-files {
+        margin-top: 2px;
+      }
+
+      .server-files h2,
+      .admin-card h2 {
+        margin: 0;
+        color: var(--text-main);
+        font-size: 14px;
+        line-height: 1.25;
+      }
+
+      .file-card,
+      .admin-card {
+        padding: 11px;
+        border: 1px solid #e3e8ef;
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .file-card {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .file-card strong {
+        display: block;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .file-card p,
+      .admin-card p {
+        margin: 4px 0 0;
+        color: var(--text-muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .file-type {
+        display: inline-flex;
+        margin-bottom: 5px;
+        padding: 4px 7px;
+        border-radius: 20px;
+        background: var(--copec-blue-light);
+        color: var(--copec-blue);
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .file-actions {
+        flex: 0 0 auto;
+        display: grid;
+        gap: 6px;
+      }
+
+      .file-actions a,
+      .file-actions button {
+        min-width: 66px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .file-actions a {
+        background: var(--copec-blue);
+        color: #fff;
+      }
+
+      .file-actions button {
+        border: 1px solid #f1b7b7;
+        background: #fff5f5;
+        color: #a32d2d;
+        cursor: pointer;
+      }
+
+      .empty-state {
+        padding: 14px;
+        border-radius: 12px;
+        background: var(--copec-gray);
+        color: var(--text-muted);
+        font-size: 12px;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .auth-form,
+      .upload-form {
+        display: grid;
+        gap: 9px;
+      }
+
+      .form-field {
+        display: grid;
+        gap: 4px;
+      }
+
+      .form-field label {
+        color: #374151;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .form-field input,
+      .form-field select,
+      .form-field textarea {
+        width: 100%;
+        min-height: 38px;
+        padding: 9px 10px;
+        border: 1px solid #cfd6df;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--text-main);
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .form-field textarea {
+        min-height: 70px;
+        resize: vertical;
+      }
+
+      .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .logout-button {
+        padding: 7px 9px;
+        border: 1px solid #cfd6df;
+        border-radius: 8px;
+        background: #fff;
+        color: #374151;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .admin-message {
+        padding: 9px 10px;
+        border-radius: 9px;
+        background: #e1f5ee;
+        color: #23653f;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .admin-message.error {
+        background: #fcebeb;
+        color: #a32d2d;
+      }
+
       .automotora-card {
         padding: 13px;
         border: 0.5px solid #d5dbe3;
@@ -776,6 +942,7 @@
               <button type="button" data-tab="videos">Videos</button>
               <button type="button" data-tab="agenda">Agenda</button>
               <button type="button" data-tab="automotora">Automotora</button>
+              <button type="button" data-tab="admin">Admin</button>
             </nav>
 
             <section id="tab-content" class="tab-panel" aria-live="polite"></section>
@@ -849,7 +1016,7 @@
         { titulo: "Test en ruta", duracion: "3:45", descripcion: "Manejo y respuesta" },
       ];
 
-      const estacionesCopec = [
+      let estacionesCopec = [
         {
           nombre: "Copec Los Dominicos",
           comuna: "Las Condes",
@@ -894,6 +1061,9 @@
         fail: ["Revisar"],
       };
 
+      let currentUser = null;
+      let archivosServidor = [];
+
       const photoIcons = {
         "car-front": '<path d="M15 35 20 21h24l5 14v12h-7v-5H22v5h-7V35Z" /><path d="M21 35h8m14 0h-8M23 25h18" />',
         seat: '<path d="M23 12h15c3 0 5 2 5 5v23H25l-5-16V15c0-2 1-3 3-3Z" /><path d="M23 41h23v8H18v-4c0-2 2-4 5-4Z" />',
@@ -905,6 +1075,60 @@
 
       const tabContent = document.querySelector("#tab-content");
       const tabButtons = document.querySelectorAll("[data-tab]");
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatBytes(bytes) {
+        if (!bytes) return "0 KB";
+        const kb = bytes / 1024;
+
+        if (kb < 1024) return `${Math.round(kb)} KB`;
+        return `${(kb / 1024).toFixed(1)} MB`;
+      }
+
+      async function apiRequest(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: "include",
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+          },
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data.error || "No se pudo completar la acción.");
+        }
+
+        return data;
+      }
+
+      async function cargarDatosServidor() {
+        try {
+          const data = await apiRequest("/api/inspection/current");
+          estacionesCopec = data.estaciones && data.estaciones.length ? data.estaciones : estacionesCopec;
+          archivosServidor = data.archivos || [];
+        } catch (_error) {
+          // Permite que el HTML siga funcionando como demo estática si el backend no está iniciado.
+        }
+      }
+
+      async function revisarSesion() {
+        try {
+          const data = await apiRequest("/api/auth/me");
+          currentUser = data.authenticated ? data.user : null;
+        } catch (_error) {
+          currentUser = null;
+        }
+      }
 
       function iconSvg(type) {
         return `<svg viewBox="0 0 64 64" aria-hidden="true">${photoIcons[type]}</svg>`;
@@ -932,6 +1156,16 @@
       function renderInforme() {
         let okIndex = 0;
         tabContent.className = "tab-panel report-panel";
+        const documentos = archivosServidor.filter((archivo) => archivo.tipo !== "video" && archivo.tipo !== "foto");
+        const documentosHtml = documentos.length
+          ? `
+              <div class="server-files">
+                <h2>Archivos subidos al informe</h2>
+                ${documentos.map(renderFileCard).join("")}
+              </div>
+            `
+          : "";
+
         tabContent.innerHTML = informe
           .map(
             (grupo) => `
@@ -957,12 +1191,13 @@
               </div>
             `,
           )
-          .join("");
+          .join("") + documentosHtml;
       }
 
       function renderVideos() {
         tabContent.className = "tab-panel video-list";
-        tabContent.innerHTML = videos
+        const videosSubidos = archivosServidor.filter((archivo) => archivo.tipo === "video");
+        const videosBase = videos
           .map(
             (video) => `
               <article class="video-card">
@@ -975,6 +1210,16 @@
             `,
           )
           .join("");
+        const videosSubidosHtml = videosSubidos.length
+          ? `
+              <div class="server-files">
+                <h2>Videos cargados por el equipo</h2>
+                ${videosSubidos.map(renderFileCard).join("")}
+              </div>
+            `
+          : "";
+
+        tabContent.innerHTML = videosBase + videosSubidosHtml;
       }
 
       function renderAgenda(estacionSeleccionada = 0) {
@@ -1050,12 +1295,174 @@
         tabContent.querySelector("[data-tab-link='agenda']").addEventListener("click", () => activateTab("agenda"));
       }
 
+      function renderFileCard(archivo, allowDelete = false) {
+        return `
+          <article class="file-card">
+            <div>
+              <span class="file-type">${escapeHtml(archivo.tipo)}</span>
+              <strong>${escapeHtml(archivo.titulo)}</strong>
+              <p>${escapeHtml(archivo.descripcion || archivo.nombreOriginal)}</p>
+              <p>${escapeHtml(archivo.nombreOriginal)} · ${formatBytes(archivo.tamano)}</p>
+            </div>
+            <div class="file-actions">
+              <a href="${escapeHtml(archivo.url)}" target="_blank" rel="noreferrer">Abrir</a>
+              ${allowDelete ? `<button type="button" data-delete-file="${archivo.id}">Eliminar</button>` : ""}
+            </div>
+          </article>
+        `;
+      }
+
+      function renderAdmin(message = "", isError = false) {
+        tabContent.className = "tab-panel admin-panel";
+
+        if (!currentUser) {
+          tabContent.innerHTML = `
+            <section class="admin-card">
+              <h2>Iniciar sesión</h2>
+              <p>Acceso para subir informes, videos, fotos, scanner, eco y documentos del vehículo.</p>
+              ${message ? `<div class="admin-message ${isError ? "error" : ""}">${escapeHtml(message)}</div>` : ""}
+              <form class="auth-form" id="login-form">
+                <div class="form-field">
+                  <label for="login-email">Correo</label>
+                  <input id="login-email" name="email" type="email" value="admin@copec.cl" required />
+                </div>
+                <div class="form-field">
+                  <label for="login-password">Contraseña</label>
+                  <input id="login-password" name="password" type="password" value="Copec123!" required />
+                </div>
+                <button class="primary-button" type="submit">Entrar</button>
+              </form>
+              <p>Usuario inicial configurable con <strong>ADMIN_EMAIL</strong> y <strong>ADMIN_PASSWORD</strong> en el servidor.</p>
+            </section>
+          `;
+
+          tabContent.querySelector("#login-form").addEventListener("submit", handleLogin);
+          return;
+        }
+
+        tabContent.innerHTML = `
+          <section class="admin-card">
+            <div class="admin-header">
+              <div>
+                <h2>Panel de carga</h2>
+                <p>Sesión iniciada como ${escapeHtml(currentUser.email)}</p>
+              </div>
+              <button class="logout-button" type="button" id="logout-button">Salir</button>
+            </div>
+          </section>
+          ${message ? `<div class="admin-message ${isError ? "error" : ""}">${escapeHtml(message)}</div>` : ""}
+          <section class="admin-card">
+            <h2>Subir archivo al informe</h2>
+            <form class="upload-form" id="upload-form">
+              <div class="form-field">
+                <label for="upload-tipo">Tipo</label>
+                <select id="upload-tipo" name="tipo">
+                  <option value="informe">Informe PDF</option>
+                  <option value="video">Video</option>
+                  <option value="foto">Foto</option>
+                  <option value="eco">Eco / evidencia técnica</option>
+                  <option value="scanner">Scanner</option>
+                  <option value="documento">Documento</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="upload-titulo">Título</label>
+                <input id="upload-titulo" name="titulo" type="text" placeholder="Ej: Informe final, video chasis, eco motor" required />
+              </div>
+              <div class="form-field">
+                <label for="upload-descripcion">Descripción</label>
+                <textarea id="upload-descripcion" name="descripcion" placeholder="Detalle breve para el comprador"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="upload-archivo">Archivo</label>
+                <input id="upload-archivo" name="archivo" type="file" accept=".pdf,.json,.txt,image/*,video/*" required />
+              </div>
+              <button class="primary-button" type="submit">Subir al informe</button>
+            </form>
+          </section>
+          <section class="server-files">
+            <h2>Archivos guardados en base de datos</h2>
+            ${
+              archivosServidor.length
+                ? archivosServidor.map((archivo) => renderFileCard(archivo, true)).join("")
+                : '<div class="empty-state">Aún no hay archivos subidos para este informe.</div>'
+            }
+          </section>
+        `;
+
+        tabContent.querySelector("#logout-button").addEventListener("click", handleLogout);
+        tabContent.querySelector("#upload-form").addEventListener("submit", handleUpload);
+        tabContent.querySelectorAll("[data-delete-file]").forEach((button) => {
+          button.addEventListener("click", () => handleDeleteFile(button.dataset.deleteFile));
+        });
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+
+        try {
+          const data = await apiRequest("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: formData.get("email"),
+              password: formData.get("password"),
+            }),
+          });
+
+          currentUser = data.user;
+          await cargarDatosServidor();
+          renderAdmin("Sesión iniciada correctamente.");
+        } catch (error) {
+          renderAdmin(error.message, true);
+        }
+      }
+
+      async function handleLogout() {
+        try {
+          await apiRequest("/api/auth/logout", { method: "POST" });
+        } catch (_error) {
+          // Si la sesión ya expiró, limpiamos el estado local igualmente.
+        }
+
+        currentUser = null;
+        renderAdmin("Sesión cerrada.");
+      }
+
+      async function handleUpload(event) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+
+        try {
+          await apiRequest("/api/admin/files", {
+            method: "POST",
+            body: formData,
+          });
+          await cargarDatosServidor();
+          renderAdmin("Archivo subido y guardado en la base de datos.");
+        } catch (error) {
+          renderAdmin(error.message, true);
+        }
+      }
+
+      async function handleDeleteFile(fileId) {
+        try {
+          await apiRequest(`/api/admin/files/${fileId}`, { method: "DELETE" });
+          await cargarDatosServidor();
+          renderAdmin("Archivo eliminado.");
+        } catch (error) {
+          renderAdmin(error.message, true);
+        }
+      }
+
       const renderers = {
         fotos: renderFotos,
         informe: renderInforme,
         videos: renderVideos,
         agenda: renderAgenda,
         automotora: renderAutomotora,
+        admin: renderAdmin,
       };
 
       function activateTab(tabName) {
@@ -1072,7 +1479,12 @@
         button.addEventListener("click", () => activateTab(button.dataset.tab));
       });
 
-      renderFotos();
+      async function iniciarPagina() {
+        renderFotos();
+        await Promise.all([cargarDatosServidor(), revisarSesion()]);
+      }
+
+      iniciarPagina();
     </script>
   </body>
 </html>

@@ -1,0 +1,30 @@
+{
+  "name": "proyecto-copec",
+  "version": "1.0.0",
+  "description": "Web funcional para informes de inspección precompra Copec.",
+  "main": "server.js",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.10.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --check server.js && node scripts/smoke-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomydominguez23/proyecto-copec-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomydominguez23/proyecto-copec-/issues"
+  },
+  "homepage": "https://github.com/tomydominguez23/proyecto-copec-#readme"
+}
